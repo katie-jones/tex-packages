@@ -1,0 +1,43 @@
+\newif\iffinal
+\finalfalse
+\DeclareOption{final}{\finaltrue}
+\ProcessOptions \relax
+
+\newcommand{\drawgrid}{\begin{tikzpicture}[remember picture,overlay]
+    \draw[gray] (current page.south west) grid (current page.north east);
+\foreach \k in {1,...,28} {
+      \path (current page.south west) ++(0.5,\k) node {\k};
+}
+\foreach \k in {1,...,20} {
+      \path (current page.south west) ++(\k,0.5) node {\k};
+  }\end{tikzpicture}}
+
+
+\newcommand{\addPage}[1]{%
+    \iffinal
+    \includepdf[pages=#1,fitpaper]{\fname}
+    \else
+    \includepdf[pages=#1,fitpaper,picturecommand={\drawgrid}]{\fname}
+    \fi
+}
+
+\newcommand{\myBox}[4]{%
+    \put(#1,#2){%
+        \begin{minipage}[t]{#3\unitlength}
+            #4
+        \end{minipage}
+    }
+}
+
+\newcommand{\comment}[3]{%
+    \myBox{#1}{#2}{1}{\pdfcomment{#3}}
+}
+
+
+\newcommand{\annot}[2]{%
+    \AddToShipoutPictureFG*{
+        \setlength{\unitlength}{1cm}
+        #2}
+    \addPage{#1}%
+}
+
